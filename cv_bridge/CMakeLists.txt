@@ -12,10 +12,13 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra)
 endif()
 
+# Ideally we should have a separate package for Python support
+option(CV_BRIDGE_ENABLE_PYTHON "Build Python package" ON)
+
 if(ANDROID)
   find_package(Boost REQUIRED)
   set(boost_python_target "")
-else()
+elseif(CV_BRIDGE_ENABLE_PYTHON)
   find_package(Python3 REQUIRED COMPONENTS Development NumPy)
   find_package(Boost QUIET)
   if(Boost_VERSION_STRING VERSION_LESS "1.67")
@@ -31,6 +34,8 @@ else()
     find_package(Boost REQUIRED COMPONENTS python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})
     set(boost_python_target "Boost::python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")
   endif()
+else()
+  find_package(Boost QUIET)
 endif()
 
 find_package(rcpputils REQUIRED)
